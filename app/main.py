@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 import os
 
-from app.models import Order, Base
+from app.models import Order, Base, CartItem
 from app.database import SessionLocal, engine, get_db
 from app.routes import router
 
