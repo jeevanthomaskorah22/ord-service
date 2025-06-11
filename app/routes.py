@@ -93,20 +93,26 @@ def add_to_cart(
     quantity: int = Form(...),
     db: Session = Depends(get_db)
 ):
-    cart_item = CartItem(user_id=user_id, product_id=product_id, quantity=quantity)
-    db.add(cart_item)
-    db.commit()
-    db.refresh(cart_item)
-    
-    return {
-        "message": "Item added to cart successfully",
-        "cart_item": {
-            "id": cart_item.id,
-            "user_id": cart_item.user_id,
-            "product_id": cart_item.product_id,
-            "quantity": cart_item.quantity
+    try:
+        print(f"Received: user_id={user_id}, product_id={product_id}, quantity={quantity}")
+        cart_item = CartItem(user_id=user_id, product_id=product_id, quantity=quantity)
+        db.add(cart_item)
+        db.commit()
+        db.refresh(cart_item)
+
+        return {
+            "message": "Item added to cart successfully",
+            "cart_item": {
+                "id": cart_item.id,
+                "user_id": cart_item.user_id,
+                "product_id": cart_item.product_id,
+                "quantity": cart_item.quantity
+            }
         }
-    }
+    except Exception as e:
+        db.rollback()
+        print("Error adding to cart:", e)
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.get("/cart/json")
@@ -149,3 +155,30 @@ def remove_item(
     db.query(CartItem).filter(CartItem.id == cart_item_id).delete()
     db.commit()
     return RedirectResponse(url=f"/cart?user_id={user_id}", status_code=HTTP_302_FOUND)
+
+from fastapi import Body
+
+@router.patch("/orders/{orderId}")
+def update_order_status(
+    orderId: int,
+    data: dict = Body(...),  # or status: str = Body(...)
+    db: Session = Depends(get_db),
+):
+
+    status = data.get("status")
+    if not status:
+        raise HTTPException(status_code=400, detail="Status not provided")
+
+    order = db.query(Order).filter(Order.id == orderId).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    order.status = status
+    db.commit()
+    db.refresh(order)
+
+    return {
+        "orderId": order.id,
+        "status": order.status,
+        "message": "Order status updated successfully."
+    }
