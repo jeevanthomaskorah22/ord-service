@@ -4,4 +4,6 @@ sqlalchemy
 psycopg2-binary
 jinja2
 python-multipart
-requests   # ✅ Add this line
+requests   
+pact-python==1.4.0
+pytest
