@@ -1,9 +1,9 @@
-fastapi
-uvicorn
+fastapi==0.67.0
+uvicorn==0.14.0
 sqlalchemy
 psycopg2-binary
 jinja2
 python-multipart
-requests   
+requests
 pact-python==1.4.0
 pytest
