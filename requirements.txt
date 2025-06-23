@@ -6,4 +6,4 @@ jinja2
 python-multipart
 requests
 pytest
-pact-python
+pact-python==1.4.0
