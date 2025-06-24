@@ -1,26 +1,10 @@
 import pytest
-import requests
-import os
-import socket
 from pact import Consumer, Provider
 from pact.matchers import Like
+import requests
 
 PACT_DIR = "./pacts"
-
-# Dynamically resolve Docker host from WSL
-def get_docker_host_ip():
-    try:
-        # Use default gateway (works inside WSL)
-        with open("/etc/resolv.conf", "r") as f:
-            for line in f:
-                if line.startswith("nameserver"):
-                    return line.strip().split()[1]
-    except Exception as e:
-        print("Failed to detect Docker host IP:", e)
-    return "localhost"  # fallback
-
-MOCK_SERVER_HOST = get_docker_host_ip()
-MOCK_SERVER_URL = f"http://{MOCK_SERVER_HOST}:1234"
+MOCK_SERVER_URL = "http://host.docker.internal:1234"
 
 # Define Pact contract
 pact = Consumer("OrderService").has_pact_with(
