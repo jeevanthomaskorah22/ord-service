@@ -4,7 +4,7 @@ from pact.matchers import Like
 import requests
 
 PACT_DIR = "./pacts"
-MOCK_SERVER_URL = "http://host.docker.internal:1234"
+MOCK_SERVER_URL = "http://localhost:1234"
 
 # Define Pact contract
 pact = Consumer("OrderService").has_pact_with(
